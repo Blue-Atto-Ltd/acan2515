@@ -8,9 +8,9 @@
 
 //··································································································
 
-#include <ACANBuffer16.h>
-#include <ACAN2515Settings.h>
-#include <MCP2515ReceiveFilters.h>
+#include "ACANBuffer16.h"
+#include "ACAN2515Settings.h"
+#include "MCP2515ReceiveFilters.h"
 #include <SPI.h>
 
 //··································································································

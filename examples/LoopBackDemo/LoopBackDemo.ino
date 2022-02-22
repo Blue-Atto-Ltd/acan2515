@@ -22,8 +22,8 @@
 //       There is a problem with the interrupt. Check if correct pin is configured
 //——————————————————————————————————————————————————————————————————————————————
 
-static const byte MCP2515_CS  = 10 ; // CS input of MCP2515 (adapt to your design) 
-static const byte MCP2515_INT =  3 ; // INT output of MCP2515 (adapt to your design)
+static const byte MCP2515_CS  = 5 ; // CS input of MCP2515 (adapt to your design) 
+static const byte MCP2515_INT =  6 ; // INT output of MCP2515 (adapt to your design)
 
 //——————————————————————————————————————————————————————————————————————————————
 //  MCP2515 Driver object
@@ -35,7 +35,7 @@ ACAN2515 can (MCP2515_CS, SPI, MCP2515_INT) ;
 //  MCP2515 Quartz: adapt to your design
 //——————————————————————————————————————————————————————————————————————————————
 
-static const uint32_t QUARTZ_FREQUENCY = 16UL * 1000UL * 1000UL ; // 16 MHz
+static const uint32_t QUARTZ_FREQUENCY = 8UL * 1000UL * 1000UL ; // 16 MHz
 
 //——————————————————————————————————————————————————————————————————————————————
 //   SETUP
@@ -46,7 +46,7 @@ void setup () {
   pinMode (LED_BUILTIN, OUTPUT) ;
   digitalWrite (LED_BUILTIN, HIGH) ;
 //--- Start serial
-  Serial.begin (38400) ;
+  Serial.begin (9600) ;
 //--- Wait for serial (blink led at 10 Hz during waiting)
   while (!Serial) {
     delay (50) ;
@@ -57,7 +57,7 @@ void setup () {
 //--- Configure ACAN2515
   Serial.println ("Configure ACAN2515") ;
   ACAN2515Settings settings (QUARTZ_FREQUENCY, 125UL * 1000UL) ; // CAN bit rate 125 kb/s
-  settings.mRequestedMode = ACAN2515Settings::LoopBackMode ; // Select loopback mode
+  settings.mRequestedMode = ACAN2515Settings::NormalMode ; // Select loopback mode
   const uint16_t errorCode = can.begin (settings, [] { can.isr () ; }) ;
   if (errorCode == 0) {
     Serial.print ("Bit Rate prescaler: ") ;
@@ -100,6 +100,7 @@ void loop () {
     gBlinkLedDate += 2000 ;
     digitalWrite (LED_BUILTIN, !digitalRead (LED_BUILTIN)) ;
     const bool ok = can.tryToSend (frame) ;
+    const bool ok = true;
     if (ok) {
       gSentFrameCount += 1 ;
       Serial.print ("Sent: ") ;

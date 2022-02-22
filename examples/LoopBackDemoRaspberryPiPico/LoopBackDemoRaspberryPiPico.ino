@@ -25,7 +25,7 @@ static const byte MCP2515_MOSI = 3 ; // SDI input of MCP2515
 static const byte MCP2515_MISO = 4 ; // SDO output of MCP2517
 
 static const byte MCP2515_CS  = 5 ;  // CS input of MCP2515 (adapt to your design)
-static const byte MCP2515_INT = 1 ;  // INT output of MCP2515 (adapt to your design)
+static const byte MCP2515_INT = 6 ;  // INT output of MCP2515 (adapt to your design)
 
 //——————————————————————————————————————————————————————————————————————————————
 //  MCP2515 Driver object
@@ -37,7 +37,7 @@ ACAN2515 can (MCP2515_CS, SPI, MCP2515_INT) ;
 //  MCP2515 Quartz: adapt to your design
 //——————————————————————————————————————————————————————————————————————————————
 
-static const uint32_t QUARTZ_FREQUENCY = 20UL * 1000UL * 1000UL ; // 20 MHz
+static const uint32_t QUARTZ_FREQUENCY = 8UL * 1000UL * 1000UL ; // 20 MHz
 
 //——————————————————————————————————————————————————————————————————————————————
 //   SETUP
@@ -64,7 +64,7 @@ void setup () {
   //--- Configure ACAN2515
   Serial.println ("Configure ACAN2515") ;
   ACAN2515Settings settings (QUARTZ_FREQUENCY, 125UL * 1000UL) ; // CAN bit rate 125 kb/s
-  settings.mRequestedMode = ACAN2515Settings::LoopBackMode ; // Select loopback mode
+  settings.mRequestedMode = ACAN2515Settings::NormalMode ; // Select loopback mode
   const uint16_t errorCode = can.begin (settings, [] { can.isr () ; }) ;
   if (errorCode == 0) {
     Serial.print ("Bit Rate prescaler: ") ;
@@ -103,18 +103,18 @@ static uint32_t gSentFrameCount = 0 ;
 
 void loop () {
   CANMessage frame ;
-  if (gBlinkLedDate < millis ()) {
-    gBlinkLedDate += 2000 ;
-    digitalWrite (LED_BUILTIN, !digitalRead (LED_BUILTIN)) ;
-    const bool ok = can.tryToSend (frame) ;
-    if (ok) {
-      gSentFrameCount += 1 ;
-      Serial.print ("Sent: ") ;
-      Serial.println (gSentFrameCount) ;
-    } else {
-      Serial.println ("Send failure") ;
-    }
-  }
+  // if (gBlinkLedDate < millis ()) {
+  //   gBlinkLedDate += 2000 ;
+  //   digitalWrite (LED_BUILTIN, !digitalRead (LED_BUILTIN)) ;
+  //   const bool ok = can.tryToSend (frame) ;
+  //   if (ok) {
+  //     gSentFrameCount += 1 ;
+  //     Serial.print ("Sent: ") ;
+  //     Serial.println (gSentFrameCount) ;
+  //   } else {
+  //     Serial.println ("Send failure") ;
+  //   }
+  // }
   if (can.available ()) {
     can.receive (frame) ;
     gReceivedFrameCount ++ ;

@@ -522,6 +522,12 @@ uint16_t ACAN2515::changeModeOnTheFly(const ACAN2515Settings::RequestedMode inRe
   return errorCode;
 }
 
+void ACAN2515::wake() {
+  mSPI.beginTransaction(mSPISettings);
+  bitModify2515Register(CANINTF_REGISTER, 0x40, 1); // Wake up 2515
+  mSPI.endTransaction();
+}
+
 //··································································································
 //    Set filters on the fly
 //··································································································

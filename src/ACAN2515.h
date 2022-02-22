@@ -72,6 +72,7 @@ class ACAN2515 {
 
   public: uint16_t changeModeOnTheFly (const ACAN2515Settings::RequestedMode inRequestedMode) ;
 
+  public: void wake();
 
 //··································································································
 //    Set filters on the fly
